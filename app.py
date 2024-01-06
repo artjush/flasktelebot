@@ -8,22 +8,21 @@ app = Flask(__name__)
 
 # Carregar as credenciais do Firebase a partir das variáveis de ambiente
 cred_obj = {
-    "type": os.environ["type"],
-    "project_id": os.environ["project_id"],
-    "private_key_id": os.environ["private_key_id"],
-    # A chave privada vem com caracteres de nova linha codificados, devem ser substituídos
-    "private_key": os.environ["private_key"].replace('\\n', '\n'),
-    "client_email": os.environ["client_email"],
-    "client_id": os.environ["client_id"],
-    "auth_uri": os.environ["auth_uri"],
-    "token_uri": os.environ["token_uri"],
-    "auth_provider_x509_cert_url": os.environ["auth_provider_x509_cert_url"],
-    "client_x509_cert_url": os.environ["client_x509_cert_url"]
+    "type": os.environ["firebase_type"],
+    "project_id": os.environ["firebase_project_id"],
+    "private_key_id": os.environ["firebase_private_key_id"],
+    "private_key": os.environ["firebase_private_key"].replace('\\n', '\n'),
+    "client_email": os.environ["firebase_client_email"],
+    "client_id": os.environ["firebase_client_id"],
+    "auth_uri": os.environ["firebase_auth_uri"],
+    "token_uri": os.environ["firebase_token_uri"],
+    "auth_provider_x509_cert_url": os.environ["firebase_auth_provider_x509_cert_url"],
+    "client_x509_cert_url": os.environ["firebase_client_x509_cert_url"]
 }
 
 cred = credentials.Certificate(cred_obj)
 firebase_admin.initialize_app(cred,
-                              {'databaseURL': os.environ['firebase_url']})
+                              {'databaseURL': os.environ['firebase_database_url']})
 
 
 @app.route('/create', methods=['POST'])
