@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # Carregar as credenciais do Firebase a partir das variáveis de ambiente
 cred_obj = {
-    "type": os.environ["ype"],
+    "type": os.environ["type"],
     "project_id": os.environ["project_id"],
     "private_key_id": os.environ["private_key_id"],
     "private_key": os.environ["private_key"].replace('\\n', '\n'),
