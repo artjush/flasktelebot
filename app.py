@@ -46,8 +46,11 @@ def read_record(numero):
     ref = db.reference('/')
     registros = ref.get()
 
-    # Vamos garantir que o número é uma string, pois é assim que parece no Firebase
-    numero = str(numero)
+    # Vamos garantir que a comparação seja feita como número
+    try:
+        numero = int(numero)  # Convertendo a string da URL para inteiro
+    except ValueError:
+        return jsonify({"error": "O número fornecido não é válido"}), 400
 
     # Encontrar todos os registros com o número correspondente
     matching_records = {k: v for k, v in registros.items() if v.get('numero') == numero}
