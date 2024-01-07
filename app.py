@@ -43,20 +43,19 @@ def create_record():
 
 @app.route('/read/<numero>', methods=['GET'])
 def read_record(numero):
-    ref = db.reference('/')
-    registros = ref.get()
-
-    # Vamos garantir que a comparação seja feita como número
     try:
-        numero = int(numero)  # Convertendo a string da URL para inteiro
+        # Assegurar que o número é um inteiro
+        numero = int(numero)
     except ValueError:
-        return jsonify({"error": "O número fornecido não é válido"}), 400
+        # Se o número não for inteiro, retorne um erro
+        return jsonify({"error": "Número fornecido inválido"}), 400
 
-    # Encontrar todos os registros com o número correspondente
-    matching_records = {k: v for k, v in registros.items() if v.get('numero') == numero}
+    ref = db.reference('/')
+    # Buscar na base de dados por registros que tenham o campo 'numero' igual ao valor especificado
+    query = ref.order_by_child('numero').equal_to(numero).get()
 
-    if matching_records:
-        return jsonify(matching_records), 200
+    if query:
+        return jsonify(query), 200
     else:
         return jsonify({"error": "Nenhum registro encontrado para o número fornecido"}), 404
 
