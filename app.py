@@ -1,8 +1,8 @@
+from flask import Flask, request, jsonify
 import os
 import uuid
 import firebase_admin
 from firebase_admin import credentials, db
-from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -21,40 +21,41 @@ cred_obj = {
 }
 
 cred = credentials.Certificate(cred_obj)
-firebase_admin.initialize_app(cred,
-                              {'databaseURL': os.environ['firebase_url']})
-
+firebase_admin.initialize_app(cred, {'databaseURL': os.environ['firebase_url']})
 
 @app.route('/create', methods=['POST'])
 def create_record():
-  try:
-    # Gera um identificador único
     unique_id = str(uuid.uuid4())
-
-    # Obtém dados do corpo da solicitação
     request_data = request.get_json()
 
-    # Prepara os dados para inserção
     data = {
         "email": request_data['email'],
         "numero": request_data['numero'],
-        "link": request_data['link'],
+        "greendados": request_data['link'],
         "situacao": "pago",
         "idTelegram": ""
     }
 
-    # Insere os dados no Firebase Realtime Database
     ref = db.reference('/')
     ref.child(unique_id).set(data)
 
     return jsonify({"success": True, "id": unique_id}), 201
 
-  except Exception as e:
-    print("An internal error occurred: {}".format(e))
-    return "An internal error occurred", 500
+@app.route('/read/<numero>', methods=['GET'])
+def read_record(numero):
+    ref = db.reference('/')
 
+    # Busca todos os registros
+    registros = ref.get()
+
+    # Filtra para encontrar o registro com o número correspondente
+    for key, value in registros.items():
+        if value.get('numero') == numero:
+            return jsonify({key: value}), 200
+
+    # Se nenhum registro for encontrado com o número fornecido
+    return jsonify({"error": "Nenhum registro encontrado para o número fornecido"}), 404
 
 @app.route('/')
 def hello_world():
-  return 'Hello, World!'
-
+    return 'Hello, World!'
