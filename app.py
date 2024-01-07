@@ -44,17 +44,18 @@ def create_record():
 @app.route('/read/<numero>', methods=['GET'])
 def read_record(numero):
     ref = db.reference('/')
-
-    # Busca todos os registros
     registros = ref.get()
 
-    # Filtra para encontrar o registro com o número correspondente
-    for key, value in registros.items():
-        if value.get('numero') == numero:
-            return jsonify({key: value}), 200
+    # Vamos garantir que o número é uma string, pois é assim que parece no Firebase
+    numero = str(numero)
 
-    # Se nenhum registro for encontrado com o número fornecido
-    return jsonify({"error": "Nenhum registro encontrado para o número fornecido"}), 404
+    # Encontrar todos os registros com o número correspondente
+    matching_records = {k: v for k, v in registros.items() if v.get('numero') == numero}
+
+    if matching_records:
+        return jsonify(matching_records), 200
+    else:
+        return jsonify({"error": "Nenhum registro encontrado para o número fornecido"}), 404
 
 @app.route('/')
 def hello_world():
