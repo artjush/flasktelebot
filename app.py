@@ -3,6 +3,7 @@ import os
 import uuid
 import firebase_admin
 from firebase_admin import credentials, db
+import requests
 
 app = Flask(__name__)
 
@@ -61,6 +62,29 @@ def read_record(numero):
     else:
         return jsonify({"error": "Nenhum registro encontrado para o número fornecido"}), 404
 
+@app.route('/revoke_invite_gp1', methods=['POST'])
+def revoke_invite():
+    try:
+        # Dados necessários para a chamada da API
+        bot_token = '6877266169:AAEu_8S4FGh80M6XSFFq3gjJYY7zI06tb1I'
+        chat_id = '-1002046964190'
+        invite_link = request.json.get('invite_link')
+
+        # URL da API do Telegram para revogar um link de convite
+        url = f'https://api.telegram.org/bot{bot_token}/revokeChatInviteLink'
+
+        # Dados para enviar com o POST request
+        payload = {
+            'chat_id': chat_id,
+            'invite_link': invite_link
+        }
+
+        # Fazendo a chamada da API
+        response = requests.post(url, data=payload)
+        return jsonify(response.json()), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
