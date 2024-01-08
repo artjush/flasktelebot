@@ -86,7 +86,7 @@ def revoke_invite():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/revoke_invite_gp2', methods=['POST'])
-def revoke_invite():
+def revoke_invite2():
     try:
         # Dados necessários para a chamada da API
         bot_token = '6877266169:AAEu_8S4FGh80M6XSFFq3gjJYY7zI06tb1I'
@@ -109,7 +109,7 @@ def revoke_invite():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/revoke_invite_gp3', methods=['POST'])
-def revoke_invite():
+def revoke_invite3():
     try:
         # Dados necessários para a chamada da API
         bot_token = '6877266169:AAEu_8S4FGh80M6XSFFq3gjJYY7zI06tb1I'
