@@ -131,6 +131,32 @@ def revoke_invite3():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/update_expiry/<numero>', methods=['POST'])
+def update_expiry(numero):
+    try:
+        # Convertendo para garantir que estamos trabalhando com o tipo correto
+        numero = int(numero)
+        nova_data = request.json.get('expira')
+
+        ref = db.reference('/')
+        registros = ref.get()
+
+        # Encontrando a chave única para o número fornecido
+        chave_encontrada = None
+        for chave, valor in registros.items():
+            if valor.get('numero') == numero:
+                chave_encontrada = chave
+                break
+        
+        # Se uma chave correspondente foi encontrada, atualize o valor de 'expira'
+        if chave_encontrada:
+            ref.child(chave_encontrada).update({"expira": nova_data})
+            return jsonify({"success": True, "message": "Data de expiração atualizada"}), 200
+        else:
+            return jsonify({"error": "Número não encontrado"}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
