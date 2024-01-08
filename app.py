@@ -134,28 +134,47 @@ def revoke_invite3():
 @app.route('/update_expiry/<numero>', methods=['POST'])
 def update_expiry(numero):
     try:
-        # Convertendo para garantir que estamos trabalhando com o tipo correto
         numero = int(numero)
         nova_data = request.json.get('expira')
 
         ref = db.reference('/')
-        registros = ref.get()
+        query_result = ref.order_by_child('numero').equal_to(numero).get()
 
-        # Encontrando a chave única para o número fornecido
-        chave_encontrada = None
-        for chave, valor in registros.items():
-            if valor.get('numero') == numero:
-                chave_encontrada = chave
-                break
-        
-        # Se uma chave correspondente foi encontrada, atualize o valor de 'expira'
-        if chave_encontrada:
-            ref.child(chave_encontrada).update({"expira": nova_data})
-            return jsonify({"success": True, "message": "Data de expiração atualizada"}), 200
+        if query_result:
+            for key in query_result:
+                ref.child(key).update({"expira": nova_data})
+                return jsonify({"success": True, "message": "Data de expiração atualizada"}), 200
         else:
             return jsonify({"error": "Número não encontrado"}), 404
+
+    except ValueError:
+        return jsonify({"error": "Número fornecido inválido"}), 400
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/delete_record', methods=['POST'])
+def delete_record():
+    try:
+        numero = request.json.get('numero')
+        
+        # Certifique-se que o 'numero' é um inteiro
+        numero = int(numero)
+        
+        # Query para encontrar o registro com o número correspondente
+        ref = db.reference('/')
+        query_result = ref.order_by_child('numero').equal_to(numero).get()
+        
+        # Se um registro com o número correspondente for encontrado, delete-o
+        if query_result:
+            for key in query_result:
+                ref.child(key).delete()
+                return jsonify({"success": True, "message": "Registro deletado com sucesso"}), 200
+        
+        # Se nenhum registro for encontrado com o número fornecido
+        return jsonify({"error": "Nenhum registro encontrado com o número fornecido"}), 404
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/')
 def hello_world():
