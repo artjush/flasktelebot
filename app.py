@@ -31,8 +31,10 @@ def create_record():
     data = {
         "email": request_data['email'],
         "numero": request_data['numero'],
-        "greendados": request_data['link'],
-        "situacao": "pago",
+        "gp1": request_data['link'],
+        "gp2": "",
+        "gp3": "",
+        "expira": request_data['expira'],
         "idTelegram": ""
     }
 
