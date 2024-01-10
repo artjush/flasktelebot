@@ -176,6 +176,31 @@ def delete_record():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/update_groups/<numero>', methods=['POST'])
+def update_groups(numero):
+    try:
+        numero = int(numero)
+        dados_atualizados = request.json.get('dados')
+
+        ref = db.reference('/')
+        query_result = ref.order_by_child('numero').equal_to(numero).get()
+
+        if query_result:
+            for key in query_result:
+                ref.child(key).update({
+                    "gp2": dados_atualizados['gp2'],
+                    "gp3": dados_atualizados['gp3'],
+                    "idTelegram": dados_atualizados['idTelegram']
+                })
+                return jsonify({"success": True, "message": "Campos atualizados com sucesso"}), 200
+        else:
+            return jsonify({"error": "Número não encontrado"}), 404
+
+    except ValueError:
+        return jsonify({"error": "Número fornecido inválido"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
