@@ -11,3 +11,4 @@ waitress==2.1.2
 Werkzeug==2.3.4
 requests
 firebase_admin
+telegram
