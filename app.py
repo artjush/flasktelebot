@@ -51,17 +51,25 @@ def process_firebase_interaction(numero, telegram_user_id):
 
     if query_result:
         unique_key = next(iter(query_result))
+        user_data = query_result[unique_key]
 
         # Atualiza o idTelegram na Firebase
         ref.child(unique_key).update({"idTelegram": telegram_user_id})
 
-        # Cria os links de convite para gp2 e gp3
-        gp2_link = create_invite_link('-1002087905925')
-        gp3_link = create_invite_link('-1001699690132')
+        # Verifica se gp2 e gp3 estão vazios e cria links, se necessário
+        gp2_link = user_data.get('gp2', '')
+        gp3_link = user_data.get('gp3', '')
+        gp1_link = user_data.get('gp1', '')  # Adiciona gp1 à resposta
 
-        # Atualiza os links de convite na Firebase
-        ref.child(unique_key).update({'gp2': gp2_link, 'gp3': gp3_link})
-        return {"gp2_link": gp2_link, "gp3_link": gp3_link}
+        if not gp2_link:
+            gp2_link = create_invite_link('-1002087905925')
+            ref.child(unique_key).update({'gp2': gp2_link})
+
+        if not gp3_link:
+            gp3_link = create_invite_link('-1001699690132')
+            ref.child(unique_key).update({'gp3': gp3_link})
+
+        return {"gp1_link": gp1_link, "gp2_link": gp2_link, "gp3_link": gp3_link}
     else:
         return None
 
@@ -77,36 +85,19 @@ def handle_webhook():
 
         if text == "/start":
             bot2.send_message(chat_id=chat_id, text="Digite seu telefone com 55+DDD+numero, sem os sinais de adição (+).")
-            return jsonify({"status": "ok"})
-
         elif text.isdigit() and len(text) >= 10:
             result = process_firebase_interaction(int(text), telegram_user_id)
-
             if result:
-                bot2.send_message(chat_id=chat_id, text=f"Seus links de convite foram atualizados.\nGP2: {result['gp2_link']}\nGP3: {result['gp3_link']}")
+                response_text = f"Seus links de convite:\nGP1: {result['gp1_link']}\nGP2: {result['gp2_link']}\nGP3: {result['gp3_link']}"
+                bot2.send_message(chat_id=chat_id, text=response_text)
             else:
                 bot2.send_message(chat_id=chat_id, text="Número não encontrado. Tente novamente.")
+        else:
+            bot2.send_message(chat_id=chat_id, text="Não entendi.")
 
-            return jsonify({"status": "ok"})
+        return jsonify({"status": "ok"})
 
     return jsonify({"status": "ok"})
-
-@app.route('/read/<numero>', methods=['GET'])
-def read_record(numero):
-    try:
-        numero = int(numero)
-    except ValueError:
-        return jsonify({"error": "Número fornecido inválido"}), 400
-
-    logging.info("Consultando número: %s", numero)
-    ref = db.reference('/')
-    query = ref.order_by_child('numero').equal_to(numero).get()
-
-    if query:
-        logging.info("Resultado da consulta: %s", query)
-        return jsonify(query), 200
-    else:
-        return jsonify({"error": "Nenhum registro encontrado para o número fornecido"}), 404
 
 if __name__ == '__main__':
     from waitress import serve
