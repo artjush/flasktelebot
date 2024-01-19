@@ -35,6 +35,7 @@ def create_record():
         "gp1": request_data['link'],
         "gp2": "",
         "gp3": "",
+        "gp4": "",
         "expira": request_data['expira'],
         "idTelegram": ""
     }
@@ -130,6 +131,30 @@ def revoke_invite3():
         return jsonify(response.json()), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/revoke_invite_gp4', methods=['POST'])
+def revoke_invite3():
+    try:
+        # Dados necessários para a chamada da API
+        bot_token = '6877266169:AAEu_8S4FGh80M6XSFFq3gjJYY7zI06tb1I'
+        chat_id = '-1001989430689'
+        invite_link = request.json.get('invite_link')
+
+        # URL da API do Telegram para revogar um link de convite
+        url = f'https://api.telegram.org/bot{bot_token}/revokeChatInviteLink'
+
+        # Dados para enviar com o POST request
+        payload = {
+            'chat_id': chat_id,
+            'invite_link': invite_link
+        }
+
+        # Fazendo a chamada da API
+        response = requests.post(url, data=payload)
+        return jsonify(response.json()), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/update_expiry/<numero>', methods=['POST'])
 def update_expiry(numero):
