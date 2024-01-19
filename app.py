@@ -133,7 +133,7 @@ def revoke_invite3():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/revoke_invite_gp4', methods=['POST'])
-def revoke_invite3():
+def revoke_invite_gp4():
     try:
         # Dados necessários para a chamada da API
         bot_token = '6877266169:AAEu_8S4FGh80M6XSFFq3gjJYY7zI06tb1I'
@@ -154,7 +154,6 @@ def revoke_invite3():
         return jsonify(response.json()), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/update_expiry/<numero>', methods=['POST'])
 def update_expiry(numero):
