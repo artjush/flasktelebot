@@ -57,9 +57,11 @@ def process_firebase_interaction(numero, telegram_user_id):
         ref.child(unique_key).update({"idTelegram": telegram_user_id})
 
         # Verifica se gp2 e gp3 estão vazios e cria links, se necessário
+        gp1_link = user_data.get('gp1', '')
         gp2_link = user_data.get('gp2', '')
         gp3_link = user_data.get('gp3', '')
-        gp1_link = user_data.get('gp1', '')  # Adiciona gp1 à resposta
+        gp4_link = user_data.get('gp4', '')
+
 
         if not gp2_link:
             gp2_link = create_invite_link('-1002087905925')
@@ -67,6 +69,10 @@ def process_firebase_interaction(numero, telegram_user_id):
 
         if not gp3_link:
             gp3_link = create_invite_link('-1001699690132')
+            ref.child(unique_key).update({'gp3': gp3_link})
+
+        if not gp4_link:
+            gp3_link = create_invite_link('-1001989430689')
             ref.child(unique_key).update({'gp3': gp3_link})
 
         return {"gp1_link": gp1_link, "gp2_link": gp2_link, "gp3_link": gp3_link}
