@@ -71,11 +71,11 @@ def process_firebase_interaction(numero, telegram_user_id):
             gp3_link = create_invite_link('-1001699690132')
             ref.child(unique_key).update({'gp3': gp3_link})
 
-        if not gp4_link:
-            gp4_link = create_invite_link('-1001989430689')
-            ref.child(unique_key).update({'gp4': gp4_link})
+       # if not gp4_link:
+        #    gp4_link = create_invite_link('-1001989430689')
+        #    ref.child(unique_key).update({'gp4': gp4_link})
 
-        return {"gp1_link": gp1_link, "gp2_link": gp2_link, "gp3_link": gp3_link, "gp4_link": gp4_link}
+        return {"gp1_link": gp1_link, "gp2_link": gp2_link, "gp3_link": gp3_link}
     else:
         return None
 
@@ -94,7 +94,7 @@ def handle_webhook():
         elif text.isdigit() and len(text) >= 10:
             result = process_firebase_interaction(int(text), telegram_user_id)
             if result:
-                response_text = f"Seus links de convite:\nGP1: {result['gp1_link']}\nGP2: {result['gp2_link']}\nGP3: {result['gp3_link']}\nGP4: {result['gp4_link']}"
+                response_text = f"Seus links de convite:\nGP1: {result['gp1_link']}\nGP2: {result['gp2_link']}\nGP3: {result['gp3_link']}"
                 bot2.send_message(chat_id=chat_id, text=response_text)
             else:
                 bot2.send_message(chat_id=chat_id, text="Número não encontrado. Tente novamente.")
