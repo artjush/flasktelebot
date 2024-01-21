@@ -90,7 +90,7 @@ def handle_webhook():
         telegram_user_id = update["message"].get("from", {}).get("id")
 
         if text == "/start":
-            bot2.send_message(chat_id=chat_id, text="Digite seu telefone com 55+DDD+numero, sem os sinais de adição (+).")
+            bot2.send_message(chat_id=chat_id, text="Digite seu telefone SEM 55, com DDD+numero apenas, sem os sinais de adição (+).")
         elif text.isdigit() and len(text) >= 10:
             result = process_firebase_interaction(int(text), telegram_user_id)
             if result:
