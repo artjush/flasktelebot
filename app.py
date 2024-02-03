@@ -68,7 +68,7 @@ def read_by_number(numero):
 def read_by_string(identificador):
     ref = db.reference('/')
     # Suponha que 'nome' é um campo válido para busca por string
-    query = ref.order_by_child('nome').equal_to(identificador).get()
+    query = ref.order_by_child('email').equal_to(identificador).get()
 
     if query:
         return jsonify(query), 200
