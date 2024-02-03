@@ -45,23 +45,35 @@ def create_record():
 
     return jsonify({"success": True, "id": unique_id}), 201
 
-@app.route('/read/<numero>', methods=['GET'])
-def read_record(numero):
+@app.route('/read/<path:identificador>', methods=['GET'])
+def read_record(identificador):
     try:
-        # Assegurar que o número é um inteiro
-        numero = int(numero)
+        # Tentar converter o identificador para int
+        numero = int(identificador)
+        # Se a conversão for bem-sucedida, trate como um número
+        return read_by_number(numero)
     except ValueError:
-        # Se o número não for inteiro, retorne um erro
-        return jsonify({"error": "Número fornecido inválido"}), 400
+        # Se a conversão falhar, trate como uma string
+        return read_by_string(identificador)
 
+def read_by_number(numero):
     ref = db.reference('/')
-    # Buscar na base de dados por registros que tenham o campo 'numero' igual ao valor especificado
     query = ref.order_by_child('numero').equal_to(numero).get()
 
     if query:
         return jsonify(query), 200
     else:
         return jsonify({"error": "Nenhum registro encontrado para o número fornecido"}), 404
+
+def read_by_string(identificador):
+    ref = db.reference('/')
+    # Suponha que 'nome' é um campo válido para busca por string
+    query = ref.order_by_child('nome').equal_to(identificador).get()
+
+    if query:
+        return jsonify(query), 200
+    else:
+        return jsonify({"error": "Nenhum registro encontrado para o identificador fornecido"}), 404
 
 @app.route('/revoke_invite_gp1', methods=['POST'])
 def revoke_invite():
