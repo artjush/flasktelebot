@@ -32,10 +32,10 @@ def create_record():
     data = {
         "email": request_data['email'],
         "numero": request_data['numero'],
-        "gp1": request_data['link'],
+        "gp1": "",
         "gp2": "",
         "gp3": "",
-        "gp4": "",
+        "gp4": request_data['link'],
         "expira": request_data['expira'],
         "idTelegram": ""
     }
