@@ -75,7 +75,7 @@ def process_firebase_interaction(numero, telegram_user_id):
         #    gp4_link = create_invite_link('-1001989430689')
         #    ref.child(unique_key).update({'gp4': gp4_link})
 
-        return {"gp1_link": gp4_link, "gp2_link": gp2_link, "gp3_link": gp3_link}
+        return {"gp1_link": gp1_link, "gp2_link": gp2_link, "gp3_link": gp3_link}
     else:
         return None
 
